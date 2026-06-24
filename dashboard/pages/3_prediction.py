@@ -13,6 +13,7 @@ from src.predictor import predict_customer
 
 st.title("Customer Churn Prediction")
 
+# Basic Information
 gender = st.selectbox(
     "Gender",
     ["Male", "Female"]
@@ -33,22 +34,111 @@ dependents = st.selectbox(
     ["Yes", "No"]
 )
 
+# Service Information
+phone_service = st.selectbox(
+    "Phone Service",
+    ["Yes", "No"]
+)
+
+multiple_lines = st.selectbox(
+    "Multiple Lines",
+    ["Yes", "No", "No phone service"]
+)
+
+internet_service = st.selectbox(
+    "Internet Service",
+    ["DSL", "Fiber optic", "No"]
+)
+
+online_security = st.selectbox(
+    "Online Security",
+    ["Yes", "No", "No internet service"]
+)
+
+online_backup = st.selectbox(
+    "Online Backup",
+    ["Yes", "No", "No internet service"]
+)
+
+device_protection = st.selectbox(
+    "Device Protection",
+    ["Yes", "No", "No internet service"]
+)
+
+tech_support = st.selectbox(
+    "Tech Support",
+    ["Yes", "No", "No internet service"]
+)
+
+streaming_tv = st.selectbox(
+    "Streaming TV",
+    ["Yes", "No", "No internet service"]
+)
+
+streaming_movies = st.selectbox(
+    "Streaming Movies",
+    ["Yes", "No", "No internet service"]
+)
+
+# Contract Information
+contract = st.selectbox(
+    "Contract",
+    ["Month-to-month", "One year", "Two year"]
+)
+
+paperless = st.selectbox(
+    "Paperless Billing",
+    ["Yes", "No"]
+)
+
+payment_method = st.selectbox(
+    "Payment Method",
+    [
+        "Electronic check",
+        "Mailed check",
+        "Bank transfer (automatic)",
+        "Credit card (automatic)"
+    ]
+)
+
+# Charges
 tenure = st.number_input(
-    "Tenure",
-    min_value=0
+    "Tenure (Months)",
+    min_value=0,
+    value=12
 )
 
 monthly = st.number_input(
     "Monthly Charges",
-    min_value=0.0
+    min_value=0.0,
+    value=50.0
 )
 
 total = st.number_input(
     "Total Charges",
-    min_value=0.0
+    min_value=0.0,
+    value=600.0
 )
 
-if st.button("Predict"):
+if st.button("Predict Churn"):
+
+    # Auto-generate charge_category
+    if monthly < 35:
+        charge_category = "Low"
+    elif monthly < 70:
+        charge_category = "Medium"
+    else:
+        charge_category = "High"
+
+    # Auto-generate tenure_group
+    if tenure <= 12:
+        tenure_group = "0-1 year"
+    elif tenure <= 24:
+        tenure_group = "1-2 years"
+    elif tenure <= 48:
+        tenure_group = "2-4 years"
+    else:
+        tenure_group = "4+ years"
 
     customer_data = {
         "customerID": "TEST001",
@@ -57,36 +147,36 @@ if st.button("Predict"):
         "Partner": partner,
         "Dependents": dependents,
         "tenure": tenure,
-        "PhoneService": "Yes",
-        "MultipleLines": "No",
-        "InternetService": "DSL",
-        "OnlineSecurity": "No",
-        "OnlineBackup": "No",
-        "DeviceProtection": "No",
-        "TechSupport": "No",
-        "StreamingTV": "No",
-        "StreamingMovies": "No",
-        "Contract": "Month-to-month",
-        "PaperlessBilling": "Yes",
-        "PaymentMethod": "Electronic check",
+        "PhoneService": phone_service,
+        "MultipleLines": multiple_lines,
+        "InternetService": internet_service,
+        "OnlineSecurity": online_security,
+        "OnlineBackup": online_backup,
+        "DeviceProtection": device_protection,
+        "TechSupport": tech_support,
+        "StreamingTV": streaming_tv,
+        "StreamingMovies": streaming_movies,
+        "Contract": contract,
+        "PaperlessBilling": paperless,
+        "PaymentMethod": payment_method,
         "MonthlyCharges": monthly,
         "TotalCharges": total,
-        "charge_category": "Medium",
-        "tenure_group": "0-1 year"
+        "charge_category": charge_category,
+        "tenure_group": tenure_group
     }
 
     try:
-        prediction, probability = predict_customer(
-            customer_data
-        )
+        prediction, probability = predict_customer(customer_data)
+
+        st.subheader("Prediction Result")
 
         if prediction[0] == 1:
             st.error(
-                f"Customer likely to churn ({probability:.2%})"
+                f"⚠️ Customer is likely to churn\n\nProbability: {probability:.2%}"
             )
         else:
             st.success(
-                f"Customer likely to stay ({1-probability:.2%})"
+                f"✅ Customer is likely to stay\n\nConfidence: {(1 - probability):.2%}"
             )
 
     except Exception as e:
