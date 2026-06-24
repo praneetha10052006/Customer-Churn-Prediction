@@ -170,14 +170,16 @@ if st.button("Predict Churn"):
 
         st.subheader("Prediction Result")
 
-        if prediction[0] == 1:
+        ipred = prediction[0]
+
+        if pred == "Yes":
             st.error(
                 f"⚠️ Customer is likely to churn\n\nProbability: {probability:.2%}"
-            )
+        )
         else:
             st.success(
                 f"✅ Customer is likely to stay\n\nConfidence: {(1 - probability):.2%}"
-            )
+        )
 
     except Exception as e:
         st.error(f"Error: {e}")

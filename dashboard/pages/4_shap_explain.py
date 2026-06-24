@@ -2,16 +2,18 @@ import streamlit as st
 
 st.title("SHAP Explainability")
 
-st.write("""
-SHAP explanations help identify which features
-have the greatest impact on customer churn predictions.
-""")
+st.write(
+    """
+    SHAP (SHapley Additive exPlanations) helps explain
+    which features contribute most to customer churn
+    predictions.
+    """
+)
 
-st.info("""
-The SHAP backend implementation is available in:
+st.subheader("SHAP Summary Plot")
 
-src/shap_explainer.py
-
-Future enhancement:
-Display SHAP summary plots directly inside Streamlit.
-""")
+st.image(
+    "reports/shap_summary.png",
+    caption="Feature Importance using SHAP",
+    use_container_width=True
+)
